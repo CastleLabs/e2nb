@@ -420,4 +420,4 @@ For support:
 
 ---
 
-Built with ❤️ by [Your Name]
+Built with ❤️ by Seth Morrow
