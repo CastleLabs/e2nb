@@ -6,6 +6,23 @@ A powerful Python application that monitors email inboxes and forwards notificat
 ![Python](https://img.shields.io/badge/python-3.6%2B-blue)
 ![Alt Text](monitor/emailsettings.png "IMAP Settings")
 
+## Available Versions
+
+E2NB is available in two versions to suit different needs:
+
+1. **GUI Version** (`e2nb.py`)
+   - Full graphical interface
+   - Interactive configuration
+   - Real-time monitoring display
+   - Best for desktop use and testing
+
+2. **Headless Version** (`e2nb-headless.py`)
+   - Command-line interface
+   - No GUI dependencies
+   - Logging to file and console
+   - Perfect for servers and automation
+   - Supports system service integration
+
 ## 📚 Table of Contents
 
 - [Features](#features)
@@ -15,6 +32,8 @@ A powerful Python application that monitors email inboxes and forwards notificat
 - [Notification Channels](#notification-channels)
 - [API Reference](#api-reference)
 - [GUI Reference](#gui-reference)
+- [Headless Mode](#headless-mode)
+- [Logging](#logging)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
@@ -24,10 +43,11 @@ A powerful Python application that monitors email inboxes and forwards notificat
 - 📧 Real-time email inbox monitoring
 - 🔔 Multiple notification channels
 - 🎯 Configurable email filtering
-- 🖥️ User-friendly GUI
+- 🖥️ User-friendly GUI and headless options
 - ⚙️ Flexible configuration options
 - 📝 Detailed logging system
 - 🔒 Secure credential handling
+- 🤖 Service/daemon support
 
 ## 🚀 Installation
 
@@ -42,11 +62,19 @@ pip install -r requirements.txt
 
 Or install packages individually:
 
+For GUI version:
 ```bash
 pip install twilio
 pip install slack_sdk
 pip install requests
 pip install tkinter
+```
+
+For Headless version:
+```bash
+pip install twilio
+pip install slack_sdk
+pip install requests
 ```
 
 ### Setup
@@ -59,11 +87,18 @@ cd e2nb
 
 2. Create configuration file:
 ```bash
+# For GUI version
 python e2nb.py
+
+# For Headless version
+python e2nb-headless.py
 ```
 The application will automatically create a `config.ini` file on first run.
 
 ## 🏃‍♂️ Quick Start
+
+### GUI Version
+
 1. Run the application:
 ```bash
 python e2nb.py
@@ -82,6 +117,59 @@ python e2nb.py
 
 4. Start monitoring and check the logs
 ![Alt Text](monitor/logs.png "logs")
+
+### Headless Version
+
+1. Run the application:
+```bash
+python e2nb-headless.py
+```
+
+2. Monitor logs:
+   - Check console output
+   - View `email_monitor.log` file
+   - Logs include timestamp and severity level
+
+3. Control the application:
+   - Use Ctrl+C for graceful shutdown
+   - Send SIGTERM for service shutdown
+
+### Running as a Service
+
+#### Systemd Service (Linux)
+Create `/etc/systemd/system/e2nb.service`:
+```ini
+[Unit]
+Description=E2NB Email Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=your_user
+WorkingDirectory=/path/to/e2nb
+ExecStart=/usr/bin/python3 /path/to/e2nb/e2nb-headless.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start the service:
+```bash
+sudo systemctl enable e2nb
+sudo systemctl start e2nb
+```
+
+#### Screen Session (Unix-like systems)
+Run in background:
+```bash
+screen -dmS e2nb python e2nb-headless.py
+```
+
+Attach to session:
+```bash
+screen -r e2nb
+```
 
 ## ⚙️ Configuration
 
@@ -152,6 +240,26 @@ Required settings:
 [CustomWebhook]
 enabled = True
 webhook_url = your-webhook-url
+```
+
+## 📝 Logging
+
+### GUI Version
+- Real-time log display in GUI
+- Event tracking in application window
+![Alt Text](monitor/logs.png "logs")
+
+### Headless Version
+- Logs written to `email_monitor.log`
+- Console output for immediate monitoring
+- Log format: `[YYYY-MM-DD HH:MM:SS] LEVEL: Message`
+- Log levels: INFO, WARNING, ERROR
+
+Example log output:
+```log
+[2024-12-05 10:15:30] INFO: Starting email monitoring
+[2024-12-05 10:15:31] INFO: Connected to IMAP server imap.gmail.com:993
+[2024-12-05 10:15:32] INFO: Found 2 unread email(s)
 ```
 
 ## 📚 API Reference
@@ -330,57 +438,6 @@ def send_telegram_message(bot_token, chat_id, subject, body):
     """
 ```
 
-## 🖥️ GUI Reference
-
-### Main Window
-
-The application window contains several tabs:
-
-1. **Email Settings Tab**
-   - IMAP server configuration
-   - Credentials
-   - Email filters
-
-2. **Settings Tab**
-   - General application settings
-   - Check intervals
-   - Message limits
-
-3. **Notification Methods Tab**
-   - Enable/disable channels
-   - Service-specific settings
-
-4. **Logs Tab**
-   - Real-time activity monitoring
-   - Error reporting
-
-### GUI Methods
-
-```python
-class EmailMonitorApp:
-    def __init__(self, root):
-        """
-        Initialize application GUI.
-        
-        Args:
-            root (tk.Tk): Tkinter root window
-        """
-        
-    def start_monitoring(self):
-        """Start email monitoring process."""
-        
-    def stop_monitoring(self):
-        """Stop email monitoring process."""
-        
-    def log(self, message):
-        """
-        Add message to log display.
-        
-        Args:
-            message (str): Log message text
-        """
-```
-
 ## 🔧 Troubleshooting
 
 ### Common Issues
@@ -399,6 +456,13 @@ class EmailMonitorApp:
 - Verify API credentials
 - Check service status
 - Monitor rate limits
+
+### Headless Mode Issues
+- Check log file for detailed error messages
+- Verify service permissions
+- Monitor system resource usage
+- Ensure proper daemon configuration
+- Check file paths in service definition
 
 ## 🤝 Contributing
 
