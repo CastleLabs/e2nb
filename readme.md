@@ -4,7 +4,7 @@ A powerful Python application that monitors email inboxes and forwards notificat
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.6%2B-blue)
-![Alt Text](monitor/emailsettings.png "Hover Title")
+![Alt Text](monitor/emailsettings.png "IMAP Settings")
 
 ## 📚 Table of Contents
 
@@ -28,7 +28,7 @@ A powerful Python application that monitors email inboxes and forwards notificat
 - ⚙️ Flexible configuration options
 - 📝 Detailed logging system
 - 🔒 Secure credential handling
-
+![Alt Text](monitor/integrations.png "Notification Settings")
 ## 🚀 Installation
 
 ### Prerequisites
