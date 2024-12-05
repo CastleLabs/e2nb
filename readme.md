@@ -4,6 +4,7 @@ A powerful Python application that monitors email inboxes and forwards notificat
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.6%2B-blue)
+![Alt Text](emailsettings.png "Hover Title")
 
 ## 📚 Table of Contents
 
