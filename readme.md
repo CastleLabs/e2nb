@@ -1,4 +1,4 @@
-# Email Monitor and Notification System
+# E2NB E-mail to Notification Blaster
 ## Complete Documentation
 
 ## Table of Contents
@@ -11,7 +11,7 @@
 
 ## Introduction
 
-The Email Monitor and Notification System is a Python-based application that monitors email inboxes for unread messages and forwards notifications through various channels including SMS, Voice Call, WhatsApp, Slack, Telegram, Discord, and Custom Webhooks. It features a graphical user interface (GUI) for easy configuration and monitoring.
+The E2NB System is a Python-based application that monitors email inboxes for unread messages and forwards notifications through various channels including SMS, Voice Call, WhatsApp, Slack, Telegram, Discord, and Custom Webhooks. It features a graphical user interface (GUI) for easy configuration and monitoring.
 
 ### Key Features
 - Real-time email monitoring
@@ -346,4 +346,3 @@ For additional support:
 
 ## Conclusion
 
-This documentation provides comprehensive coverage of the Email Monitor and Notification System. For additional assistance or to report issues, please contact the system administrator or refer to the troubleshooting section.
