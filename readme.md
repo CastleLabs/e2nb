@@ -64,7 +64,7 @@ python e2nb.py
 The application will automatically create a `config.ini` file on first run.
 
 ## 🏃‍♂️ Quick Start
-
+![Alt Text](monitor/logs.png "logs")
 1. Run the application:
 ```bash
 python e2nb.py
