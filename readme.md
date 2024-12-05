@@ -53,7 +53,7 @@ pip install tkinter
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/e2nb.git
+git clone https://github.com/morroware/e2nb.git
 cd e2nb
 ```
 
