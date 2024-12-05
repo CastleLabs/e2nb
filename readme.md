@@ -28,7 +28,7 @@ A powerful Python application that monitors email inboxes and forwards notificat
 - ⚙️ Flexible configuration options
 - 📝 Detailed logging system
 - 🔒 Secure credential handling
-![Alt Text](monitor/integrations.png "Notification Settings")
+
 ## 🚀 Installation
 
 ### Prerequisites
@@ -76,7 +76,9 @@ python e2nb.py
 
 3. Enable desired notification channels:
    - Select notification methods
+   - ![Alt Text](monitor/integrations.png "Notification Settings")
    - Configure channel settings
+   - ![Alt Text](monitor/twilio.png "Example channel settings Settings")
 
 4. Start monitoring and check the logs
 ![Alt Text](monitor/logs.png "logs")
