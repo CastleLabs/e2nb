@@ -1,524 +1,349 @@
-# Email Notification Service Integration Guide
-
-This document provides a comprehensive guide on how to integrate the email monitoring script with various notification services. The script monitors a Gmail inbox for unread emails and sends notifications via multiple channels such as Twilio SMS, Voice Calls, WhatsApp, Slack, Telegram, Discord, Microsoft Teams, Mattermost, and Custom Webhooks.
-
----
+# Email Monitor and Notification System
+## Complete Documentation
 
 ## Table of Contents
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [User Guide](#user-guide)
+4. [Configuration](#configuration)
+5. [Technical Reference](#technical-reference)
+6. [Troubleshooting](#troubleshooting)
+
+## Introduction
+
+The Email Monitor and Notification System is a Python-based application that monitors email inboxes for unread messages and forwards notifications through various channels including SMS, Voice Call, WhatsApp, Slack, Telegram, Discord, and Custom Webhooks. It features a graphical user interface (GUI) for easy configuration and monitoring.
+
+### Key Features
+- Real-time email monitoring
+- Multiple notification channels
+- Configurable email filtering
+- User-friendly GUI
+- Flexible configuration options
+- Detailed logging system
+
+## Installation
+
+### Prerequisites
+```bash
+# Required Python packages
+pip install twilio
+pip install slack_sdk
+pip install requests
+pip install tkinter
+```
+
+### Configuration File
+The application uses a `config.ini` file for storing settings. If not present, it will be created automatically with default values.
+
+## User Guide
+
+### Starting the Application
+1. Run the Python script:
+```bash
+python email_monitor.py
+```
 
-- [Prerequisites](#prerequisites)
-- [Configuration File Structure](#configuration-file-structure)
-- [Gmail Integration](#gmail-integration)
-- [Twilio SMS Integration](#twilio-sms-integration)
-- [Twilio Voice Call Integration](#twilio-voice-call-integration)
-- [Twilio WhatsApp Integration](#twilio-whatsapp-integration)
-- [Slack Integration](#slack-integration)
-- [Telegram Integration](#telegram-integration)
-- [Discord Integration](#discord-integration)
-- [Microsoft Teams Integration](#microsoft-teams-integration)
-- [Mattermost Integration](#mattermost-integration)
-- [Custom Webhook Integration](#custom-webhook-integration)
-- [Running the Script](#running-the-script)
-- [Troubleshooting](#troubleshooting)
-- [Security Considerations](#security-considerations)
-- [Conclusion](#conclusion)
+### Main Interface
+The application interface is organized into several tabs:
+- **Email Settings**: Configure email server connection
+- **Settings**: General application settings
+- **Notification Methods**: Enable/disable notification channels
+- **Notification-specific tabs**: Configure individual notification services
+- **Logs**: View application activity
 
----
+### Basic Setup
+1. Configure Email Settings:
+   - Enter IMAP server details
+   - Provide email credentials
+   - Set email filters (optional)
 
-## Prerequisites
+2. Enable Notification Methods:
+   - Check desired notification methods
+   - Configure each selected method
 
-- Python 3.x installed on your system
-- Basic knowledge of Python scripting
-- Access to the services you wish to integrate (e.g., Twilio account, Slack workspace)
-- Required Python packages installed:
+3. Start Monitoring:
+   - Click "Start Monitoring"
+   - View activity in the Logs tab
 
-    ```bash
-    pip install imaplib2 email twilio slack_sdk requests configparser
-    ```
+### Stopping the Application
+- Click "Stop Monitoring" to halt email checking
+- Close the application window
 
----
+## Configuration
 
-## Configuration File Structure
+### Email Settings
+- `imap_server`: IMAP server address (e.g., "imap.gmail.com")
+- `imap_port`: Server port (typically 993 for SSL)
+- `username`: Email address
+- `password`: Email password
+- `filter_emails`: Comma-separated list of email addresses or domains to monitor
 
-Create a `config.ini` file in the same directory as your script or specify the path in the `load_config` function. The configuration file should have sections for each service you want to integrate.
+### General Settings
+- `max_sms_length`: Maximum length for SMS messages
+- `check_interval`: Time between email checks (seconds)
 
-### Example `config.ini`
+### Notification Settings
+Each notification method has specific configuration requirements:
 
-    [Gmail]
-    username = your_gmail_username@gmail.com
-    password = your_app_specific_password
+#### Twilio (SMS/Voice/WhatsApp)
+- Account SID
+- Auth Token
+- From Number
+- To Number(s)
 
-    [Twilio]
-    enabled = True
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = your_twilio_phone_number
-    destination_number = +1234567890, +0987654321
+#### Slack
+- Bot Token
+- Channel Name
 
-    [Voice]
-    enabled = False
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = your_twilio_phone_number
-    destination_number = +1234567890, +0987654321
+#### Telegram
+- Bot Token
+- Chat ID
 
-    [WhatsApp]
-    enabled = False
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = whatsapp:+14155238886
-    to_number = whatsapp:+1234567890, whatsapp:+0987654321
+#### Discord
+- Webhook URL
 
-    [Slack]
-    enabled = False
-    token = xoxb-your-slack-bot-token
-    channel = your-channel-name
+#### Custom Webhook
+- Webhook URL
 
-    [Telegram]
-    enabled = False
-    bot_token = your_telegram_bot_token
-    chat_id = your_telegram_chat_id
+## Technical Reference
 
-    [Discord]
-    enabled = False
-    webhook_url = your_discord_webhook_url
+### Core Functions
 
-    [Teams]
-    enabled = False
-    webhook_url = your_teams_webhook_url
+#### Configuration Management
 
-    [Mattermost]
-    enabled = False
-    webhook_url = your_mattermost_webhook_url
+##### `load_config(config_file=CONFIG_FILE_PATH)`
+Loads configuration from the specified INI file.
 
-    [CustomWebhook]
-    enabled = False
-    webhook_url = your_custom_webhook_url
+**Parameters:**
+- `config_file`: Path to configuration file (default: 'config.ini')
 
-    [Settings]
-    max_sms_length = 1600
+**Returns:**
+- `configparser.ConfigParser`: Configuration object
 
----
+**Example:**
+```python
+config = load_config('custom_config.ini')
+```
 
-## Gmail Integration
+##### `save_config(config, config_file=CONFIG_FILE_PATH)`
+Saves configuration to the specified INI file.
 
-### Overview
+**Parameters:**
+- `config`: Configuration object
+- `config_file`: Target file path
 
-The script connects to your Gmail inbox using IMAP to monitor for unread emails.
+##### `create_default_config(config_file=CONFIG_FILE_PATH)`
+Creates a default configuration file.
 
-### Steps
+**Parameters:**
+- `config_file`: Target file path
 
-1. **Enable IMAP Access:**
+#### Email Operations
 
-   - Log in to your Gmail account.
-   - Go to **Settings** > **See all settings** > **Forwarding and POP/IMAP**.
-   - In the **IMAP Access** section, select **Enable IMAP**.
-   - Click **Save Changes**.
+##### `connect_to_imap(server, port, username, password)`
+Establishes connection to IMAP server.
 
-2. **Generate App Password:**
+**Parameters:**
+- `server`: IMAP server address
+- `port`: Server port
+- `username`: Email username
+- `password`: Email password
 
-   - If you have two-factor authentication enabled, you'll need to generate an app-specific password.
-   - Go to your [Google Account Security page](https://myaccount.google.com/security).
-   - Under **"Signing in to Google"**, select **App passwords**.
-   - Generate a new app password for **Mail**.
+**Returns:**
+- `imaplib.IMAP4_SSL`: Connected IMAP object or None on failure
 
-3. **Update `config.ini`:**
+##### `fetch_unread_emails(imap)`
+Retrieves unread emails from the inbox.
 
-    ```ini
-    [Gmail]
-    username = your_gmail_username@gmail.com
-    password = your_app_specific_password
-    ```
+**Parameters:**
+- `imap`: Connected IMAP object
 
----
+**Returns:**
+- List of tuples: (email_id, email_message)
 
-## Twilio SMS Integration
+##### `extract_email_body(msg)`
+Extracts plain text body from email message.
 
-### Overview
+**Parameters:**
+- `msg`: Email message object
 
-Use Twilio's SMS service to send text message notifications.
+**Returns:**
+- `str`: Email body text
 
-### Steps
+##### `mark_as_read(imap, email_id)`
+Marks an email as read.
 
-1. **Create a Twilio Account:**
+**Parameters:**
+- `imap`: IMAP connection
+- `email_id`: Email identifier
 
-   - Sign up at [Twilio Sign Up](https://www.twilio.com/try-twilio).
+**Returns:**
+- `bool`: Success status
 
-2. **Get Account SID and Auth Token:**
+#### Notification Functions
 
-   - Find your **Account SID** and **Auth Token** on the [Twilio Console Dashboard](https://www.twilio.com/console).
+##### `send_sms_via_twilio(account_sid, auth_token, from_number, to_number, body)`
+Sends SMS using Twilio.
 
-3. **Get a Twilio Phone Number:**
+**Parameters:**
+- `account_sid`: Twilio account SID
+- `auth_token`: Twilio auth token
+- `from_number`: Sender's number
+- `to_number`: Recipient's number
+- `body`: Message content
 
-   - Purchase a phone number capable of sending SMS messages.
+**Returns:**
+- `str`: Message SID or None on failure
 
-4. **Update `config.ini`:**
+##### `make_voice_call(account_sid, auth_token, from_number, to_number, message)`
+Initiates voice call via Twilio.
 
-    ```ini
-    [Twilio]
-    enabled = True
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = your_twilio_phone_number
-    destination_number = +1234567890, +0987654321
-    ```
+**Parameters:**
+- `account_sid`: Twilio account SID
+- `auth_token`: Twilio auth token
+- `from_number`: Caller number
+- `to_number`: Recipient's number
+- `message`: Message to read
 
-   - **`enabled`**: Set to `True` to enable SMS notifications.
-   - **`destination_number`**: Comma-separated list of recipient phone numbers.
+**Returns:**
+- `str`: Call SID or None on failure
 
-5. **Set Maximum SMS Length (Optional):**
+##### `send_whatsapp_message(account_sid, auth_token, from_number, to_number, body)`
+Sends WhatsApp message via Twilio.
 
-    ```ini
-    [Settings]
-    max_sms_length = 1600
-    ```
+**Parameters:**
+- `account_sid`: Twilio account SID
+- `auth_token`: Twilio auth token
+- `from_number`: Sender's WhatsApp number
+- `to_number`: Recipient's WhatsApp number
+- `body`: Message content
 
----
+**Returns:**
+- `str`: Message SID or None on failure
 
-## Twilio Voice Call Integration
+##### `send_slack_message(token, channel, subject, body)`
+Sends message to Slack channel.
 
-### Overview
+**Parameters:**
+- `token`: Slack bot token
+- `channel`: Target channel
+- `subject`: Message subject
+- `body`: Message content
 
-Make voice calls and read out the email content using Twilio's Voice API.
+**Returns:**
+- `str`: Message timestamp or None on failure
 
-### Steps
+##### `send_telegram_message(bot_token, chat_id, subject, body)`
+Sends message via Telegram.
 
-1. **Use the Same Twilio Account:**
+**Parameters:**
+- `bot_token`: Telegram bot token
+- `chat_id`: Target chat ID
+- `subject`: Message subject
+- `body`: Message content
 
-   - Reuse the account SID and auth token from the SMS setup.
+**Returns:**
+- `bool`: Success status
 
-2. **Get a Twilio Phone Number for Calls:**
+##### `send_discord_message(webhook_url, subject, body)`
+Sends message to Discord channel.
 
-   - Ensure your Twilio number supports voice calls.
+**Parameters:**
+- `webhook_url`: Discord webhook URL
+- `subject`: Message subject
+- `body`: Message content
 
-3. **Update `config.ini`:**
+**Returns:**
+- `bool`: Success status
 
-    ```ini
-    [Voice]
-    enabled = True
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = your_twilio_phone_number
-    destination_number = +1234567890, +0987654321
-    ```
+##### `send_custom_webhook(webhook_url, payload)`
+Sends data to custom webhook.
 
----
+**Parameters:**
+- `webhook_url`: Target webhook URL
+- `payload`: Data to send
 
-## Twilio WhatsApp Integration
+**Returns:**
+- `bool`: Success status
 
-### Overview
+### GUI Class: EmailMonitorApp
 
-Send WhatsApp messages using Twilio's API.
+#### Main Methods
 
-### Steps
+##### `__init__(self, root)`
+Initializes the application GUI.
 
-1. **Apply for WhatsApp Business API Access:**
+**Parameters:**
+- `root`: Tkinter root window
 
-   - Follow Twilio's [WhatsApp Getting Started Guide](https://www.twilio.com/docs/whatsapp).
+##### `create_widgets(self)`
+Creates all GUI elements.
 
-2. **Use the Sandbox for Testing:**
+##### `save_settings(self)`
+Saves current configuration to file.
 
-   - Join the sandbox by sending a code via WhatsApp as instructed in the Twilio console.
+##### `start_monitoring(self)`
+Initiates email monitoring process.
 
-3. **Update `config.ini`:**
+##### `stop_monitoring(self)`
+Stops email monitoring process.
 
-    ```ini
-    [WhatsApp]
-    enabled = True
-    account_sid = your_twilio_account_sid
-    auth_token = your_twilio_auth_token
-    from_number = whatsapp:+14155238886  # Twilio sandbox number
-    to_number = whatsapp:+1234567890, whatsapp:+0987654321
-    ```
+##### `log(self, message)`
+Adds message to log display.
 
----
+**Parameters:**
+- `message`: Log message text
 
-## Slack Integration
-
-### Overview
-
-Send notifications to a Slack channel using a bot token.
-
-### Steps
-
-1. **Create a Slack App:**
-
-   - Go to [Slack API: Applications](https://api.slack.com/apps).
-   - Click **Create New App**.
-
-2. **Configure App Permissions:**
-
-   - Under **OAuth & Permissions**, add the following scopes:
-     - `chat:write`
-     - `channels:read`
-
-3. **Install the App to Your Workspace:**
-
-   - Click **Install App** and authorize it in your workspace.
-
-4. **Invite the Bot to the Channel:**
-
-   - In Slack, invite the bot to the desired channel with `/invite @your_bot_name`.
-
-5. **Get the Bot User OAuth Token:**
-
-   - Copy the **Bot User OAuth Token** from the **OAuth & Permissions** page.
-
-6. **Update `config.ini`:**
-
-    ```ini
-    [Slack]
-    enabled = True
-    token = xoxb-your-slack-bot-token
-    channel = your-channel-name  # e.g., general
-    ```
-
----
-
-## Telegram Integration
-
-### Overview
-
-Send messages to a Telegram chat or channel using a bot.
-
-### Steps
-
-1. **Create a Telegram Bot:**
-
-   - Open Telegram and start a chat with [@BotFather](https://t.me/BotFather).
-   - Send `/newbot` and follow the instructions to create a new bot.
-   - Copy the **bot token** provided.
-
-2. **Get Your Chat ID:**
-
-   - Start a chat with your bot or add it to a group/channel.
-   - Send a message to the bot.
-   - Use the [Get Updates](https://api.telegram.org/bot<your-bot-token>/getUpdates) API method to find your `chat_id`.
-
-3. **Update `config.ini`:**
-
-    ```ini
-    [Telegram]
-    enabled = True
-    bot_token = your_telegram_bot_token
-    chat_id = your_telegram_chat_id
-    ```
-
----
-
-## Discord Integration
-
-### Overview
-
-Send messages to a Discord channel using a webhook.
-
-### Steps
-
-1. **Create a Webhook in Discord:**
-
-   - Open your Discord server settings.
-   - Go to **Integrations** > **Webhooks**.
-   - Click **New Webhook**.
-   - Choose the channel and copy the **Webhook URL**.
-
-2. **Update `config.ini`:**
-
-    ```ini
-    [Discord]
-    enabled = True
-    webhook_url = your_discord_webhook_url
-    ```
-
----
-
-## Microsoft Teams Integration
-
-### Overview
-
-Send messages to a Microsoft Teams channel using an incoming webhook.
-
-### Steps
-
-1. **Add Incoming Webhook Connector:**
-
-   - In Teams, go to the channel where you want to receive messages.
-   - Click **...** next to the channel name and select **Connectors**.
-   - Search for **Incoming Webhook** and add it.
-
-2. **Configure the Webhook:**
-
-   - Give it a name and optionally upload an image.
-   - Copy the **Webhook URL** provided.
-
-3. **Update `config.ini`:**
-
-    ```ini
-    [Teams]
-    enabled = True
-    webhook_url = your_teams_webhook_url
-    ```
-
----
-
-## Mattermost Integration
-
-### Overview
-
-Send messages to a Mattermost channel using an incoming webhook.
-
-### Steps
-
-1. **Enable Incoming Webhooks:**
-
-   - In Mattermost, go to **Main Menu** > **Integrations** > **Incoming Webhooks**.
-   - Click **Add Incoming Webhook**.
-
-2. **Configure the Webhook:**
-
-   - Select the channel and copy the **Webhook URL**.
-
-3. **Update `config.ini`:**
-
-    ```ini
-    [Mattermost]
-    enabled = True
-    webhook_url = your_mattermost_webhook_url
-    ```
-
----
-
-## Custom Webhook Integration
-
-### Overview
-
-Send custom payloads to any webhook URL.
-
-### Steps
-
-1. **Set Up Your Webhook Endpoint:**
-
-   - Ensure you have an endpoint ready to receive POST requests with JSON payloads.
-
-2. **Update `config.ini`:**
-
-    ```ini
-    [CustomWebhook]
-    enabled = True
-    webhook_url = your_custom_webhook_url
-    ```
-
-3. **Payload Structure:**
-
-   - The script sends a JSON payload with `subject` and `body` fields.
-
-     ```json
-     {
-       "subject": "Email Subject",
-       "body": "Email Body"
-     }
-     ```
-
----
-
-## Running the Script
-
-1. **Install Required Python Packages:**
-
-    ```bash
-    pip install imaplib2 email twilio slack_sdk requests configparser
-    ```
-
-2. **Ensure `config.ini` is Properly Configured:**
-
-   - Check that all necessary sections are filled out correctly.
-
-3. **Run the Script:**
-
-    ```bash
-    python your_script_name.py
-    ```
-
-4. **Monitoring:**
-
-   - The script runs in a loop, checking for new emails every 30 seconds.
-   - It outputs logs to the console.
-
----
+##### `monitor_emails(self)`
+Main email monitoring loop.
 
 ## Troubleshooting
 
 ### Common Issues
 
-- **Authentication Errors:**
+#### Connection Errors
+1. Verify IMAP server settings
+2. Check network connectivity
+3. Confirm firewall settings
 
-  - Ensure that usernames, passwords, tokens, and API keys are correct.
-  - Check that app-specific passwords are used where necessary.
+#### Authentication Failures
+1. Verify credentials
+2. Check for two-factor authentication
+3. Confirm app-specific password requirements
 
-- **Network Connectivity:**
-
-  - Verify that your system has internet access.
-  - Check for firewall or proxy settings that might block connections.
-
-- **Service-Specific Errors:**
-
-  - Review error messages in the console output for clues.
-  - Check service dashboards or logs for more detailed error information.
-
-### Testing Individual Services
-
-- **Gmail:**
-
-  - Use an email client to confirm that you can access the Gmail account using IMAP.
-
-- **Twilio SMS:**
-
-  - Send a test SMS via the Twilio console.
-
-- **Slack:**
-
-  - Use the Slack API tester to post a message to your channel.
-
-- **Telegram:**
-
-  - Use the Bot API URL in your browser to send a test message.
-
-    ```url
-    https://api.telegram.org/bot<your-bot-token>/sendMessage?chat_id=<your-chat-id>&text=Test
-    ```
-
-- **Discord, Teams, Mattermost:**
-
-  - Use `curl` or a REST client to send a test message to your webhook URL.
+#### Notification Issues
+1. Verify API credentials
+2. Check rate limits
+3. Confirm network connectivity
 
 ### Logging
+- Check the Logs tab for detailed error messages
+- Review application output for additional details
 
-- Add more verbose logging to the script by inserting `print` statements at critical points.
-- Consider writing logs to a file for persistent monitoring.
+### Support
+For additional support:
+1. Check configuration
+2. Review error messages
+3. Verify network connectivity
+4. Contact system administrator
 
----
+## Best Practices
 
-## Security Considerations
+### Security
+1. Use environment variables for sensitive data
+2. Regularly update credentials
+3. Implement proper access controls
 
-- **Protect Credentials:**
+### Performance
+1. Adjust check interval based on needs
+2. Monitor resource usage
+3. Implement proper error handling
 
-  - Never commit `config.ini` with sensitive information to version control.
-  - Use environment variables or encrypted storage for production systems.
-
-- **Rate Limits and Quotas:**
-
-  - Be aware of any rate limits imposed by the services.
-  - Monitor usage to avoid unexpected charges.
-
-- **Data Privacy:**
-
-  - Ensure that transmitting email content over external services complies with data protection regulations.
-
----
+### Maintenance
+1. Regular configuration backups
+2. Log rotation
+3. Regular updates
 
 ## Conclusion
 
-By following this guide, you should be able to integrate the email monitoring script with your desired notification services. Customize the script and configuration as needed to fit your specific requirements.
-
----
-
-If you encounter any issues not covered in this guide, please consult the official documentation of the respective services or seek support from their communities.
+This documentation provides comprehensive coverage of the Email Monitor and Notification System. For additional assistance or to report issues, please contact the system administrator or refer to the troubleshooting section.
