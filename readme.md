@@ -1,348 +1,422 @@
-# E2NB E-mail to Notification Blaster
-## Complete Documentation
+# E2NB (Email to Notification Blaster)
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [User Guide](#user-guide)
-4. [Configuration](#configuration)
-5. [Technical Reference](#technical-reference)
-6. [Troubleshooting](#troubleshooting)
+A powerful Python application that monitors email inboxes and forwards notifications through multiple channels including SMS, Voice, WhatsApp, Slack, Telegram, Discord, and custom webhooks.
 
-## Introduction
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.6%2B-blue)
 
-The E2NB System is a Python-based application that monitors email inboxes for unread messages and forwards notifications through various channels including SMS, Voice Call, WhatsApp, Slack, Telegram, Discord, and Custom Webhooks. It features a graphical user interface (GUI) for easy configuration and monitoring.
+## 📚 Table of Contents
 
-### Key Features
-- Real-time email monitoring
-- Multiple notification channels
-- Configurable email filtering
-- User-friendly GUI
-- Flexible configuration options
-- Detailed logging system
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Notification Channels](#notification-channels)
+- [API Reference](#api-reference)
+- [GUI Reference](#gui-reference)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Installation
+## ✨ Features
+
+- 📧 Real-time email inbox monitoring
+- 🔔 Multiple notification channels
+- 🎯 Configurable email filtering
+- 🖥️ User-friendly GUI
+- ⚙️ Flexible configuration options
+- 📝 Detailed logging system
+- 🔒 Secure credential handling
+
+## 🚀 Installation
 
 ### Prerequisites
+
+- Python 3.6 or higher
+- Required packages:
+
 ```bash
-# Required Python packages
+pip install -r requirements.txt
+```
+
+Or install packages individually:
+
+```bash
 pip install twilio
 pip install slack_sdk
 pip install requests
 pip install tkinter
 ```
 
-### Configuration File
-The application uses a `config.ini` file for storing settings. If not present, it will be created automatically with default values.
+### Setup
 
-## User Guide
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/e2nb.git
+cd e2nb
+```
 
-### Starting the Application
-1. Run the Python script:
+2. Create configuration file:
+```bash
+python e2nb.py
+```
+The application will automatically create a `config.ini` file on first run.
+
+## 🏃‍♂️ Quick Start
+
+1. Run the application:
 ```bash
 python e2nb.py
 ```
 
-### Main Interface
-The application interface is organized into several tabs:
-- **Email Settings**: Configure email server connection
-- **Settings**: General application settings
-- **Notification Methods**: Enable/disable notification channels
-- **Notification-specific tabs**: Configure individual notification services
-- **Logs**: View application activity
+2. Configure email settings in the GUI:
+   - IMAP server details
+   - Email credentials
+   - Optional email filters
 
-### Basic Setup
-1. Configure Email Settings:
-   - Enter IMAP server details
-   - Provide email credentials
-   - Set email filters (optional)
+3. Enable desired notification channels:
+   - Select notification methods
+   - Configure channel settings
 
-2. Enable Notification Methods:
-   - Check desired notification methods
-   - Configure each selected method
+4. Start monitoring and check the logs
 
-3. Start Monitoring:
-   - Click "Start Monitoring"
-   - View activity in the Logs tab
-
-### Stopping the Application
-- Click "Stop Monitoring" to halt email checking
-- Close the application window
-
-## Configuration
+## ⚙️ Configuration
 
 ### Email Settings
-- `imap_server`: IMAP server address (e.g., "imap.gmail.com")
-- `imap_port`: Server port (typically 993 for SSL)
-- `username`: Email address
-- `password`: Email password
-- `filter_emails`: Comma-separated list of email addresses or domains to monitor
+
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `imap_server` | IMAP server address | imap.gmail.com |
+| `imap_port` | Server port (SSL) | 993 |
+| `username` | Email address | user@example.com |
+| `password` | Email password | ******** |
+| `filter_emails` | Email filters | @domain.com, user@example.com |
 
 ### General Settings
-- `max_sms_length`: Maximum length for SMS messages
-- `check_interval`: Time between email checks (seconds)
 
-### Notification Settings
-Each notification method has specific configuration requirements:
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `max_sms_length` | Maximum SMS length | 1600 |
+| `check_interval` | Email check interval (seconds) | 60 |
 
-#### Twilio (SMS/Voice/WhatsApp)
-- Account SID
-- Auth Token
-- From Number
-- To Number(s)
+## 📱 Notification Channels
 
-#### Slack
-- Bot Token
-- Channel Name
+### Twilio (SMS/Voice/WhatsApp)
 
-#### Telegram
-- Bot Token
-- Chat ID
-
-#### Discord
-- Webhook URL
-
-#### Custom Webhook
-- Webhook URL
-
-## Technical Reference
-
-### Core Functions
-
-#### Configuration Management
-
-##### `load_config(config_file=CONFIG_FILE_PATH)`
-Loads configuration from the specified INI file.
-
-**Parameters:**
-- `config_file`: Path to configuration file (default: 'config.ini')
-
-**Returns:**
-- `configparser.ConfigParser`: Configuration object
-
-**Example:**
-```python
-config = load_config('custom_config.ini')
+Required settings:
+```ini
+[Twilio]
+enabled = True
+account_sid = your_account_sid
+auth_token = your_auth_token
+from_number = +1234567890
+destination_number = +1234567890
 ```
 
-##### `save_config(config, config_file=CONFIG_FILE_PATH)`
-Saves configuration to the specified INI file.
+### Slack
 
-**Parameters:**
-- `config`: Configuration object
-- `config_file`: Target file path
+Required settings:
+```ini
+[Slack]
+enabled = True
+token = xoxb-your-bot-token
+channel = #channel-name
+```
 
-##### `create_default_config(config_file=CONFIG_FILE_PATH)`
-Creates a default configuration file.
+### Telegram
 
-**Parameters:**
-- `config_file`: Target file path
+Required settings:
+```ini
+[Telegram]
+enabled = True
+bot_token = your-bot-token
+chat_id = your-chat-id
+```
 
-#### Email Operations
+### Discord
 
-##### `connect_to_imap(server, port, username, password)`
-Establishes connection to IMAP server.
+Required settings:
+```ini
+[Discord]
+enabled = True
+webhook_url = your-webhook-url
+```
 
-**Parameters:**
-- `server`: IMAP server address
-- `port`: Server port
-- `username`: Email username
-- `password`: Email password
+### Custom Webhook
 
-**Returns:**
-- `imaplib.IMAP4_SSL`: Connected IMAP object or None on failure
+Required settings:
+```ini
+[CustomWebhook]
+enabled = True
+webhook_url = your-webhook-url
+```
 
-##### `fetch_unread_emails(imap)`
-Retrieves unread emails from the inbox.
+## 📚 API Reference
 
-**Parameters:**
-- `imap`: Connected IMAP object
+### Configuration Management
 
-**Returns:**
-- List of tuples: (email_id, email_message)
+#### `load_config(config_file='config.ini')`
 
-##### `extract_email_body(msg)`
-Extracts plain text body from email message.
+Load application configuration from INI file.
 
-**Parameters:**
-- `msg`: Email message object
+```python
+def load_config(config_file='config.ini'):
+    """
+    Load configuration from INI file.
 
-**Returns:**
-- `str`: Email body text
+    Args:
+        config_file (str): Path to configuration file
+        
+    Returns:
+        configparser.ConfigParser: Configuration object
+        
+    Example:
+        config = load_config('custom_config.ini')
+    """
+```
 
-##### `mark_as_read(imap, email_id)`
-Marks an email as read.
+#### `save_config(config, config_file='config.ini')`
 
-**Parameters:**
-- `imap`: IMAP connection
-- `email_id`: Email identifier
+Save configuration changes to INI file.
 
-**Returns:**
-- `bool`: Success status
+```python
+def save_config(config, config_file='config.ini'):
+    """
+    Save configuration to INI file.
+    
+    Args:
+        config (configparser.ConfigParser): Configuration to save
+        config_file (str): Target file path
+    """
+```
 
-#### Notification Functions
+### Email Operations
 
-##### `send_sms_via_twilio(account_sid, auth_token, from_number, to_number, body)`
-Sends SMS using Twilio.
+#### `connect_to_imap(server, port, username, password)`
 
-**Parameters:**
-- `account_sid`: Twilio account SID
-- `auth_token`: Twilio auth token
-- `from_number`: Sender's number
-- `to_number`: Recipient's number
-- `body`: Message content
+Establish secure IMAP connection.
 
-**Returns:**
-- `str`: Message SID or None on failure
+```python
+def connect_to_imap(server, port, username, password):
+    """
+    Connect to IMAP server securely.
+    
+    Args:
+        server (str): IMAP server address
+        port (int): Server port number
+        username (str): Email username
+        password (str): Email password
+        
+    Returns:
+        imaplib.IMAP4_SSL: Connected IMAP object or None on failure
+    
+    Example:
+        imap = connect_to_imap('imap.gmail.com', 993, 'user@gmail.com', 'password')
+    """
+```
 
-##### `make_voice_call(account_sid, auth_token, from_number, to_number, message)`
-Initiates voice call via Twilio.
+#### `fetch_unread_emails(imap)`
 
-**Parameters:**
-- `account_sid`: Twilio account SID
-- `auth_token`: Twilio auth token
-- `from_number`: Caller number
-- `to_number`: Recipient's number
-- `message`: Message to read
+Fetch unread messages from inbox.
 
-**Returns:**
-- `str`: Call SID or None on failure
+```python
+def fetch_unread_emails(imap):
+    """
+    Get unread emails from inbox.
+    
+    Args:
+        imap (imaplib.IMAP4_SSL): Connected IMAP object
+        
+    Returns:
+        list: Tuples of (email_id, email_message)
+    """
+```
 
-##### `send_whatsapp_message(account_sid, auth_token, from_number, to_number, body)`
-Sends WhatsApp message via Twilio.
+### Notification Services
 
-**Parameters:**
-- `account_sid`: Twilio account SID
-- `auth_token`: Twilio auth token
-- `from_number`: Sender's WhatsApp number
-- `to_number`: Recipient's WhatsApp number
-- `body`: Message content
+#### SMS Notifications
 
-**Returns:**
-- `str`: Message SID or None on failure
+```python
+def send_sms_via_twilio(account_sid, auth_token, from_number, to_number, body):
+    """
+    Send SMS via Twilio.
+    
+    Args:
+        account_sid (str): Twilio account SID
+        auth_token (str): Twilio auth token
+        from_number (str): Sender's phone number
+        to_number (str): Recipient's phone number
+        body (str): Message content
+        
+    Returns:
+        str: Message SID or None on failure
+        
+    Example:
+        sid = send_sms_via_twilio(
+            'AC123...', 
+            'auth_token',
+            '+1234567890',
+            '+9876543210',
+            'Hello from E2NB!'
+        )
+    """
+```
 
-##### `send_slack_message(token, channel, subject, body)`
-Sends message to Slack channel.
+#### Voice Calls
 
-**Parameters:**
-- `token`: Slack bot token
-- `channel`: Target channel
-- `subject`: Message subject
-- `body`: Message content
+```python
+def make_voice_call(account_sid, auth_token, from_number, to_number, message):
+    """
+    Make voice call via Twilio.
+    
+    Args:
+        account_sid (str): Twilio account SID
+        auth_token (str): Twilio auth token
+        from_number (str): Caller's number
+        to_number (str): Recipient's number
+        message (str): Message to read
+        
+    Returns:
+        str: Call SID or None on failure
+    """
+```
 
-**Returns:**
-- `str`: Message timestamp or None on failure
+#### Chat Platforms
 
-##### `send_telegram_message(bot_token, chat_id, subject, body)`
-Sends message via Telegram.
+##### Slack
 
-**Parameters:**
-- `bot_token`: Telegram bot token
-- `chat_id`: Target chat ID
-- `subject`: Message subject
-- `body`: Message content
+```python
+def send_slack_message(token, channel, subject, body):
+    """
+    Send message to Slack channel.
+    
+    Args:
+        token (str): Slack bot token
+        channel (str): Target channel name
+        subject (str): Message subject
+        body (str): Message content
+        
+    Returns:
+        str: Message timestamp or None on failure
+        
+    Example:
+        ts = send_slack_message(
+            'xoxb-token',
+            '#notifications',
+            'New Email',
+            'Email content here'
+        )
+    """
+```
 
-**Returns:**
-- `bool`: Success status
+##### Telegram
 
-##### `send_discord_message(webhook_url, subject, body)`
-Sends message to Discord channel.
+```python
+def send_telegram_message(bot_token, chat_id, subject, body):
+    """
+    Send message via Telegram.
+    
+    Args:
+        bot_token (str): Telegram bot token
+        chat_id (str): Target chat ID
+        subject (str): Message subject
+        body (str): Message content
+        
+    Returns:
+        bool: Success status
+    """
+```
 
-**Parameters:**
-- `webhook_url`: Discord webhook URL
-- `subject`: Message subject
-- `body`: Message content
+## 🖥️ GUI Reference
 
-**Returns:**
-- `bool`: Success status
+### Main Window
 
-##### `send_custom_webhook(webhook_url, payload)`
-Sends data to custom webhook.
+The application window contains several tabs:
 
-**Parameters:**
-- `webhook_url`: Target webhook URL
-- `payload`: Data to send
+1. **Email Settings Tab**
+   - IMAP server configuration
+   - Credentials
+   - Email filters
 
-**Returns:**
-- `bool`: Success status
+2. **Settings Tab**
+   - General application settings
+   - Check intervals
+   - Message limits
 
-### GUI Class: EmailMonitorApp
+3. **Notification Methods Tab**
+   - Enable/disable channels
+   - Service-specific settings
 
-#### Main Methods
+4. **Logs Tab**
+   - Real-time activity monitoring
+   - Error reporting
 
-##### `__init__(self, root)`
-Initializes the application GUI.
+### GUI Methods
 
-**Parameters:**
-- `root`: Tkinter root window
+```python
+class EmailMonitorApp:
+    def __init__(self, root):
+        """
+        Initialize application GUI.
+        
+        Args:
+            root (tk.Tk): Tkinter root window
+        """
+        
+    def start_monitoring(self):
+        """Start email monitoring process."""
+        
+    def stop_monitoring(self):
+        """Stop email monitoring process."""
+        
+    def log(self, message):
+        """
+        Add message to log display.
+        
+        Args:
+            message (str): Log message text
+        """
+```
 
-##### `create_widgets(self)`
-Creates all GUI elements.
-
-##### `save_settings(self)`
-Saves current configuration to file.
-
-##### `start_monitoring(self)`
-Initiates email monitoring process.
-
-##### `stop_monitoring(self)`
-Stops email monitoring process.
-
-##### `log(self, message)`
-Adds message to log display.
-
-**Parameters:**
-- `message`: Log message text
-
-##### `monitor_emails(self)`
-Main email monitoring loop.
-
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Common Issues
 
 #### Connection Errors
-1. Verify IMAP server settings
-2. Check network connectivity
-3. Confirm firewall settings
+- Verify IMAP server settings
+- Check network connectivity
+- Confirm firewall settings
 
-#### Authentication Failures
-1. Verify credentials
-2. Check for two-factor authentication
-3. Confirm app-specific password requirements
+#### Authentication Issues
+- Verify credentials
+- Check 2FA settings
+- Confirm app-specific passwords
 
-#### Notification Issues
-1. Verify API credentials
-2. Check rate limits
-3. Confirm network connectivity
+#### Notification Problems
+- Verify API credentials
+- Check service status
+- Monitor rate limits
 
-### Logging
-- Check the Logs tab for detailed error messages
-- Review application output for additional details
+## 🤝 Contributing
 
-### Support
-For additional support:
-1. Check configuration
-2. Review error messages
-3. Verify network connectivity
-4. Contact system administrator
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-## Best Practices
+## 📄 License
 
-### Security
-1. Use environment variables for sensitive data
-2. Regularly update credentials
-3. Implement proper access controls
+Distributed under the MIT License. See `LICENSE` for more information.
 
-### Performance
-1. Adjust check interval based on needs
-2. Monitor resource usage
-3. Implement proper error handling
+## 📞 Support
 
-### Maintenance
-1. Regular configuration backups
-2. Log rotation
-3. Regular updates
+For support:
+1. Check [Troubleshooting](#troubleshooting) section
+2. Review error messages in logs
+3. Open GitHub issue
+4. Contact maintainers
 
-## Conclusion
+---
 
+Built with ❤️ by [Your Name]
