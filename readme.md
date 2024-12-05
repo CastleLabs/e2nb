@@ -40,7 +40,7 @@ The application uses a `config.ini` file for storing settings. If not present, i
 ### Starting the Application
 1. Run the Python script:
 ```bash
-python email_monitor.py
+python e2nb.py
 ```
 
 ### Main Interface
