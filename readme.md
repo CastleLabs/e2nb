@@ -56,12 +56,6 @@ E2NB is available in two versions to suit different needs:
 - Python 3.6 or higher
 - Required packages:
 
-```bash
-pip install -r requirements.txt
-```
-
-Or install packages individually:
-
 For GUI version:
 ```bash
 pip install twilio
