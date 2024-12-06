@@ -25,18 +25,18 @@ E2NB is available in two versions to suit different needs:
 
 ## 📚 Table of Contents
 
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [Notification Channels](#notification-channels)
-- [API Reference](#api-reference)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Configuration](#%EF%B8%8F-configuration)
+- [Notification Channels](#-notification-channels)
+- [API Reference](#-api-reference)
 - [GUI Reference](#gui-reference)
 - [Headless Mode](#headless-mode)
-- [Logging](#logging)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+- [Logging](#-logging)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## ✨ Features
 
@@ -479,7 +479,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 📞 Support
 
 For support:
-1. Check [Troubleshooting](#troubleshooting) section
+1. Check [Troubleshooting](#-troubleshooting) section
 2. Review error messages in logs
 3. Open GitHub issue
 4. Contact maintainers
