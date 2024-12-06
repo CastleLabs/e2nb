@@ -1,6 +1,6 @@
 # E2NB (Email to Notification Blaster)
 
-A powerful Python application that monitors email inboxes and forwards notifications through multiple channels including SMS, Voice, WhatsApp, Slack, Telegram, Discord, and custom webhooks.
+A Python application that monitors email inboxes and forwards notifications through multiple channels including SMS, Voice, WhatsApp, Slack, Telegram, Discord, and custom webhooks.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.6%2B-blue)
