@@ -481,9 +481,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 For support:
 1. Check [Troubleshooting](#-troubleshooting) section
 2. Review error messages in logs
-3. Open GitHub issue
-4. Contact maintainers
-
 ---
 
 Built with ❤️ by Seth Morrow
